@@ -320,6 +320,9 @@ export class BattleScene extends SceneBase {
       }
 
       if (key === "enableTouchControls") {
+        if (import.meta.env.VITE_DEFAULT_TOUCH_CONTROLS === "0") {
+          return;
+        }
         const touchControls = document.getElementById("touchControls");
         if (touchControls && typeof value === "boolean") {
           touchControls.classList.toggle("visible", value);

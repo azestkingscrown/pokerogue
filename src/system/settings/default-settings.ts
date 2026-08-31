@@ -30,7 +30,7 @@ const defaultGeneralSettings: GeneralSettings = {
   dexForDevs: false,
   eggSkipPreference: EggSkipPreference.ASK,
   enableRetries: false,
-  enableTouchControls: true, // auto
+  enableTouchControls: import.meta.env.VITE_DEFAULT_TOUCH_CONTROLS !== "0", // app-notouch mode sets VITE_DEFAULT_TOUCH_CONTROLS=0 to hard-disable virtual pad (hidden regardless of hardware/settings)
   enableTutorials: import.meta.env.VITE_BYPASS_TUTORIAL !== "1",
   enableVibration: false,
   expGainsSpeed: ExpGainsSpeed.DEFAULT,

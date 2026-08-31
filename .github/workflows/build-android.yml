@@ -1,0 +1,111 @@
+name: Build Android APK (single APK sideload)
+
+on:
+  push:
+    branches: [feat/android-single-apk]
+    paths:
+      - "src/**"
+      - "assets/**"
+      - "locales/**"
+      - "plugins/**"
+      - "public/**"
+      - "index.html"
+      - "vite.config.ts"
+      - "capacitor.config.ts"
+      - ".env.app*"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "android/**"
+      - ".github/workflows/build-android.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: build-android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # 7.0.0
+        with:
+          submodules: recursive
+          fetch-depth: 1
+
+      - uses: ./.github/actions/setup-deps
+
+      - name: Setup Java 17
+        uses: actions/setup-java@8df1039502a15b94feb0ff82d19533962982f7f5  # v4.7.0
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@42d28355b317d3bda1be48457d02447e43704a6  # v3.2.1
+
+      - name: Accept licenses / install build-tools
+        run: |
+          yes | sdkmanager --licenses || true
+          sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"
+
+      - name: Build web (app — touch default ON)
+        run: pnpm build:app
+
+      - name: Capacitor copy (app)
+        run: pnpm exec cap copy android
+
+      - name: Assemble Debug (app)
+        working-directory: android
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Rename APK (app)
+        run: |
+          mv android/app/build/outputs/apk/debug/app-debug.apk pokerogue-app-debug.apk
+          ls -lh pokerogue-app-debug.apk
+          aapt dump badging pokerogue-app-debug.apk | grep -E "package|sdkVersion|native-code" || true
+
+      - name: Build web (app-notouch — virtual pad hard OFF)
+        run: pnpm build:app-notouch
+
+      - name: Capacitor copy (app-notouch)
+        run: pnpm exec cap copy android
+
+      - name: Assemble Debug (app-notouch)
+        working-directory: android
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Rename APK (app-notouch)
+        run: |
+          mv android/app/build/outputs/apk/debug/app-debug.apk pokerogue-app-notouch-debug.apk
+          ls -lh pokerogue-app-notouch-debug.apk
+          aapt dump badging pokerogue-app-notouch-debug.apk | grep -E "package|sdkVersion|native-code" || true
+
+      - name: Upload APKs
+        uses: actions/upload-artifact@834a144ee995460fbf70947e4a71ad7ef7a243a0ef  # v4.6.2
+        with:
+          name: pokerogue-android-apks
+          path: |
+            pokerogue-app-debug.apk
+            pokerogue-app-notouch-debug.apk
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Create GitHub Release (tag = run number)
+        if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/feat/android-single-apk'
+        uses: softprops/action-gh-release@da05d552573ad5aba039ea855c4802d29848e5c  # v2.2.2
+        with:
+          tag_name: android-build-${{ github.run_number }}
+          name: Android APK build ${{ github.run_number }}
+          body: |
+            Single-APK sideload builds (API 26~36, arm64).
+            - `pokerogue-app-debug.apk` — touch pad default ON (hasTouchscreen gating)
+            - `pokerogue-app-notouch-debug.apk` — `VITE_DEFAULT_TOUCH_CONTROLS=0` hard-OFF (pad never renders, settings hidden)
+            Install: `adb install -r <apk>` or copy to device and allow unknown apps.
+          files: |
+            pokerogue-app-debug.apk
+            pokerogue-app-notouch-debug.apk
+          fail_on_unmatched_files: true

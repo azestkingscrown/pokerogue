@@ -187,6 +187,9 @@ export class TouchControl {
   }
 
   public render(): void {
+    if (import.meta.env.VITE_DEFAULT_TOUCH_CONTROLS === "0") {
+      return;
+    }
     if (!hasTouchscreen() || !settings.general.enableTouchControls) {
       return;
     }
@@ -238,6 +241,10 @@ export function preventDoubleTapZoom(): void {
  * @returns `true` if the device is a mobile device, otherwise `false`.
  */
 export function isMobile(): boolean {
+  // WebView/Capacitor 호환: touch capability 우선 판별 (Android 8~16 WebView `; wv)` 대응)
+  if (hasTouchscreen()) {
+    return true;
+  }
   let ret = false;
   (a => {
     // Check the user agent string against a regex for mobile devices

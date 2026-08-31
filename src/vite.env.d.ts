@@ -8,7 +8,7 @@ type HTTP_URL = `http${"" | "s"}://${string}`;
 interface ImportMetaEnv {
   // TODO: There doesn't appear to be a way to override Vite's definition of MODE;
   // it still shows up as "string"...
-  readonly MODE: "development" | "beta" | "production" | "test" | "app";
+  readonly MODE: "development" | "beta" | "production" | "test" | "app" | "app-notouch";
   readonly VITE_PORT?: `${number}`;
   readonly VITE_BYPASS_LOGIN?: "0" | "1";
   readonly VITE_BYPASS_TUTORIAL?: "0" | "1";
@@ -17,6 +17,7 @@ interface ImportMetaEnv {
   readonly VITE_DISCORD_CLIENT_ID?: string;
   readonly VITE_GOOGLE_CLIENT_ID?: string;
   readonly VITE_I18N_DEBUG?: "0" | "1";
+  readonly VITE_DEFAULT_TOUCH_CONTROLS?: "0" | "1";
 }
 
 // tell vite to disallow missing env vars

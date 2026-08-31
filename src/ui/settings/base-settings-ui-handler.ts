@@ -56,10 +56,10 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
 
     this.category = category;
 
-    if (hasTouchscreen()) {
-      this.uiItems = uiItems;
-    } else {
+    if (import.meta.env.VITE_DEFAULT_TOUCH_CONTROLS === "0" || !hasTouchscreen()) {
       this.uiItems = uiItems.filter(uiItem => !uiItem.touchscreenOnly);
+    } else {
+      this.uiItems = uiItems;
     }
 
     this.title = capitalizeFirstLetter(category);

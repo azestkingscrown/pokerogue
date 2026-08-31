@@ -1,10 +1,12 @@
 import { initializeManifest } from "#app/global-manifest";
 
 try {
-  const manifest = await fetch("/manifest.json").then(r => r.json());
+  const res = await fetch("./manifest.json");
+  if (!res.ok) {
+    throw new Error(`Manifest not found: HTTP ${res.status}`);
+  }
+  const manifest = await res.json();
   initializeManifest(manifest["manifest"]);
-} catch (err) {
-  // Manifest not found (likely local build or path error on live)
-  // TODO: Do we want actual error handling here?
-  console.log("Manifest not found:", err);
+} catch (_err) {
+  // Manifest not found (local/app build) — silently ignore, caching disabled
 }

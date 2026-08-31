@@ -44,7 +44,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 	<link rel="stylesheet" type="text/css" href="./index.css" />
 	<link rel="manifest" href="./manifest.webmanifest">
   <script>
-    if ("serviceWorker" in navigator) {
+    // Android WebView/Capacitor 호환: http/https에서만 SW 등록 (capacitor://, file://에서는 스킵)
+    if ("serviceWorker" in navigator && /^https?:$/.test(window.location.protocol)) {
       window.addEventListener("load", function () {
         navigator.serviceWorker.register("./service-worker.js").then(
           function (registration) {

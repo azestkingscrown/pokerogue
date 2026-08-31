@@ -22,7 +22,7 @@ async function startGame(): Promise<void> {
   const LoadingScene = (await import("./loading-scene")).LoadingScene;
   const BattleScene = (await import("./battle-scene")).BattleScene;
   const game = new Phaser.Game({
-    type: Phaser.WEBGL,
+    type: Phaser.AUTO,
     parent: "app",
     scale: {
       width: 1920,

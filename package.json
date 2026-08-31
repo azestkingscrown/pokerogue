@@ -43,9 +43,13 @@
     "update-submodules": "git submodule update --progress --init --recursive --force --depth 1",
     "update-submodules:remote": "pnpm update-submodules --remote",
     "sample-movesets": "vite-node scripts/gen-moveset/gen-moveset-driver.ts",
-    "species-data:export": "vite-node scripts/species-data-exporter/main.ts"
+    "species-data:export": "vite-node scripts/species-data-exporter/main.ts",
+    "build:app-notouch": "vite build --mode app-notouch"
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.0",
+    "@capacitor/cli": "^8.5.0",
+    "@capacitor/core": "^8.5.0",
     "@material/material-color-utilities": "^0.4.0",
     "ajv": "^8.20.0",
     "core-js": "^3.50.0",
