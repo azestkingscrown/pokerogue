@@ -53,7 +53,11 @@ jobs:
           sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"
 
       - name: Capacitor update (generate native plugins)
-        run: pnpm exec cap update android
+        run: |
+          mkdir -p android/app/src/main/assets
+          test -f android/app/src/main/assets/capacitor.plugins.json || echo '[]' > android/app/src/main/assets/capacitor.plugins.json
+          test -f android/app/src/main/assets/capacitor.config.json || echo '{}' > android/app/src/main/assets/capacitor.config.json
+          pnpm exec cap update android
 
       - name: Build web (app — touch default ON)
         run: pnpm build:app
