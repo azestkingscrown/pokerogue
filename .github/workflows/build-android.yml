@@ -52,6 +52,9 @@ jobs:
           yes | sdkmanager --licenses || true
           sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"
 
+      - name: Capacitor sync (generate native plugins)
+        run: pnpm exec cap sync android
+
       - name: Build web (app — touch default ON)
         run: pnpm build:app
 
