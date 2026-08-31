@@ -39,13 +39,13 @@ jobs:
       - uses: ./.github/actions/setup-deps
 
       - name: Setup Java 17
-        uses: actions/setup-java@8df1039502a15b94feb0ff82d19533962982f7f5  # v4.7.0
+        uses: actions/setup-java@3a4f6e1af504cf6a31855fa899c6aa5355ba6c12  # v4.7.0
         with:
           distribution: temurin
           java-version: "17"
 
       - name: Setup Android SDK
-        uses: android-actions/setup-android@42d28355b317d3bda1be48457d02447e43704a6  # v3.2.1
+        uses: android-actions/setup-android@00854ea68c109d98c75d956347303bf7c45b0277  # v3.2.1
 
       - name: Accept licenses / install build-tools
         run: |
@@ -85,7 +85,7 @@ jobs:
           aapt dump badging pokerogue-app-notouch-debug.apk | grep -E "package|sdkVersion|native-code" || true
 
       - name: Upload APKs
-        uses: actions/upload-artifact@834a144ee995460fbf70947e4a71ad7ef7a243a0ef  # v4.6.2
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
         with:
           name: pokerogue-android-apks
           path: |
@@ -96,7 +96,7 @@ jobs:
 
       - name: Create GitHub Release (tag = run number)
         if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/feat/android-single-apk'
-        uses: softprops/action-gh-release@da05d552573ad5aba039ea855c4802d29848e5c  # v2.2.2
+        uses: softprops/action-gh-release@da05d552573ad5aba039eaac05058a918a7bf631  # v2.2.2
         with:
           tag_name: android-build-${{ github.run_number }}
           name: Android APK build ${{ github.run_number }}

@@ -37,3 +37,4 @@ ignore:
    - "LICENSES"
    - .idea
    - android
+   - .claude
